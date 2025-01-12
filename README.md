@@ -12,14 +12,14 @@ This project performs somatic variant calling on **Illumina WGS data** using **M
 
 ## Installation and Setup
 ### System requirements
--**UNIX OS**
--**Java 17.0.12**
+- **UNIX OS**
+- **Java 17.0.12**
 ### Tools required
 - **GATK** (Genome Analysis Toolkit) 
 - **BWA** (Burrows-Wheeler Aligner) 
 - **SAMtools** 
--**FASTQC** 
--**MULTIQC** 
+- **FASTQC** 
+- **MULTIQC** 
 
 ## Data
 ### Key Details:
