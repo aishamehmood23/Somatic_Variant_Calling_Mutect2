@@ -33,3 +33,28 @@ This project performs somatic variant calling on **Illumina WGS data** using **M
 -	**Purpose:** Used as a control for somatic variant calling to distinguish somatic mutations from germline variants
 -	**Sequencing Platform:** Illumina NovaSeq 6000
 -	**Read Length:** Paired-end 150bp
+
+## Workflow
+The project follows a step-by-step process:  
+### **1. Pre-processing**  
+The raw sequencing reads are processed through several steps to ensure data quality and proper alignment before variant calling.  
+
+- **Quality Control using FastQC**  
+  The raw sequencing reads (*FASTQ files*) are assessed for quality metrics such as base quality scores, GC content, adapter contamination, and sequence duplication levels. This step helps to identify any issues in the data before proceeding.  
+
+- **Alignment using BWA-MEM**  
+  The high-quality reads are aligned to the reference genome (hg38) using the **BWA-MEM** algorithm. This step maps the sequencing reads to their corresponding genomic locations, producing a **SAM file** (Sequence Alignment/Map).  
+
+- **Mark Duplicates and Sort using GATK**  
+  Duplicate reads, which may have arisen from PCR amplification during library preparation, are identified and flagged using **GATK MarkDuplicates**. Sorting the reads ensure they are arranged in genomic order, improving processing efficiency in downstream analyses.  
+
+- **Base Quality Recalibration (BQSR) using GATK**  
+  Systematic errors in base quality scores introduced by sequencing instruments are corrected using **GATK BaseRecalibrator**. This step relies on known variation databases ( **dbSNP**) to refine quality scores, increasing variant calling accuracy.  
+
+- **Collect Alignment & Insert Size Metrics using GATK**  
+  Alignment statistics, such as read mapping percentages, coverage depth, and insert size distribution, are gathered using **GATK CollectAlignmentSummaryMetrics** and **CollectInsertSizeMetrics**. These metrics provide insights into sequencing performance and alignment quality.  
+
+
+
+
+
