@@ -96,3 +96,13 @@ bwa mem -t 4 -R "@RG\tID:HG008-T\tPL:ILLUMINA\tSM:HG008-T" ${ref} ${reads}/HG008
 
 /home/aishamehmood/apps/gatk-4.6.0.0/gatk CollectInsertSizeMetrics INPUT=${aligned_reads}/HG008-T_sorted_dedup_bqsr_reads.bam OUTPUT=${aligned_reads}/HG008-T_insert_size_metrics.txt HISTOGRAM_FILE=${aligned_reads}/HG008-T_insert_size_histogram.pdf
 
+
+# *****Download Mutect2 additional files*****
+
+# gnomAD
+#wget -P /home/aishamehmood/Project_Mutect2/additional_files/mutect2_additional_files https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/somatic-hg38/af-only-gnomad.hg38.vcf.gz                                            
+#wget -P /home/aishamehmood/Project_Mutect2/additional_files/mutect2_additional_files https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/somatic-hg38/af-only-gnomad.hg38.vcf.gz.tbi                                              
+
+# PoN
+#wget -P /home/aishamehmood/Project_Mutect2/additional_files/mutect2_additional_files https://storage.googleapis.com/gatk-best-practices/somatic-hg38/1000g_pon.hg38.vcf.gz                                                
+#wget -P /home/aishamehmood/Project_Mutect2/additional_files/mutect2_additional_files https://storage.googleapis.com/gatk-best-practices/somatic-hg38/1000g_pon.hg38.vcf.gz.tbi                                               
