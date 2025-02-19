@@ -55,6 +55,14 @@ The raw sequencing reads are processed through several steps to ensure data qual
   Alignment statistics, such as read mapping percentages, coverage depth, and insert size distribution, are gathered using **GATK CollectAlignmentSummaryMetrics** and **CollectInsertSizeMetrics**. These metrics provide insights into sequencing performance and alignment quality.  
 
 
+### **2. Variant Calling**
+
+- **Call Variants using Gatk Mutect2**
+  Somatic variants are identified using Mutect2, with the analysis limited to 10 chromosomes to reduce computational demands. The workflow remains the same for all chromosomes analysis, and users can modify the -L option accordingly. The output is an unfiltered VCF file containing raw variant calls. The --f1r2-tar-gz option is used during this step to collect strand orientation bias data, which is later required for filtering artifacts caused by sequencing errors.
+
+- **Estimating Cross Sample Contamination**
+  This step helps estimate the fraction of cross-sample contamination. The **GATK GetPileupSummaries** tool summarizes read support for known population variants. The **GATK CalculateContamination** tool estimates the contamination fraction. The output, HG008_pair_calculatecontamination.table, is used in **FilterMutectCalls**
+   
 
 
 

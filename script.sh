@@ -76,7 +76,6 @@ bwa mem -t 4 -R "@RG\tID:HG008-T\tPL:ILLUMINA\tSM:HG008-T" ${ref} ${reads}/HG008
 /home/aishamehmood/apps/gatk-4.6.0.0/gatk MarkDuplicatesSpark -I ${aligned_reads}/HG008-T.paired.sam -O ${aligned_reads}/HG008-T_sorted_dedup_reads.bam
 /home/aishamehmood/apps/gatk-4.6.0.0/gatk MarkDuplicatesSpark -I ${aligned_reads}/HG008-N-D.paired.sam -O ${aligned_reads}/HG008-N-D_sorted_dedup_reads.bam
 
-
 # 1.4. Base quality recalibration
 # Build the model and then apply the model to adjust base quality scores
 /home/aishamehmood/apps/gatk-4.6.0.0/gatk BaseRecalibrator -I ${aligned_reads}/HG008-N-D_sorted_dedup_reads.bam -R ${ref} --known-sites ${known_sites} -O ${aligned_reads}/HG008-N-D_recal_data.table
@@ -100,9 +99,74 @@ bwa mem -t 4 -R "@RG\tID:HG008-T\tPL:ILLUMINA\tSM:HG008-T" ${ref} ${reads}/HG008
 # *****Download Mutect2 additional files*****
 
 # gnomAD
-#wget -P /home/aishamehmood/Project_Mutect2/additional_files/mutect2_additional_files https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/somatic-hg38/af-only-gnomad.hg38.vcf.gz                                            
-#wget -P /home/aishamehmood/Project_Mutect2/additional_files/mutect2_additional_files https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/somatic-hg38/af-only-gnomad.hg38.vcf.gz.tbi                                              
+wget -P /home/aishamehmood/Project_Mutect2/additional_files/mutect2_additional_files https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/somatic-hg38/af-only-gnomad.hg38.vcf.gz                                            
+wget -P /home/aishamehmood/Project_Mutect2/additional_files/mutect2_additional_files https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/somatic-hg38/af-only-gnomad.hg38.vcf.gz.tbi                                              
 
 # PoN
-#wget -P /home/aishamehmood/Project_Mutect2/additional_files/mutect2_additional_files https://storage.googleapis.com/gatk-best-practices/somatic-hg38/1000g_pon.hg38.vcf.gz                                                
-#wget -P /home/aishamehmood/Project_Mutect2/additional_files/mutect2_additional_files https://storage.googleapis.com/gatk-best-practices/somatic-hg38/1000g_pon.hg38.vcf.gz.tbi                                               
+wget -P /home/aishamehmood/Project_Mutect2/additional_files/mutect2_additional_files https://storage.googleapis.com/gatk-best-practices/somatic-hg38/1000g_pon.hg38.vcf.gz                                                
+wget -P /home/aishamehmood/Project_Mutect2/additional_files/mutect2_additional_files https://storage.googleapis.com/gatk-best-practices/somatic-hg38/1000g_pon.hg38.vcf.gz.tbi 
+
+
+# Set directories path
+gatk_path=/home/aishamehmood/apps/gatk-4.6.0.0/gatk
+mutect2_supporting_files=/home/aishamehmood/Project_Mutect2/additional_files/mutect2_additional_files
+
+
+# -----------------------------------------
+# Step 2: Variant Calling with Mutect2
+# -----------------------------------------
+
+# 2.1. Call variants using Gatk Mutect2
+# Note: Only a subset of chromosomes was used for variant calling due to memory constraints (8GB RAM)
+# This is for practice/demo purposes
+${gatk_path} Mutect2 -R ${ref} \
+     -I ${aligned_reads}/HG008-T_sorted_dedup_bqsr_reads.bam \
+     -I ${aligned_reads}/HG008-N-D_sorted_dedup_bqsr_reads.bam \
+     -tumor HG008-T \
+     -normal HG008-N-D \
+     --germline-resource ${mutect2_supporting_files}/af-only-gnomad.hg38.vcf.gz \
+     --panel-of-normals ${mutect2_supporting_files}/1000g_pon.hg38.vcf.gz \
+     -L chr1 -L chr3 -L chr5 -L chr7 -L chr9 -L chr11 -L chr13 -L chr15 -L chr17 -L chr19 \
+     -O ${results}/HG008_somatic_variants_mutect2_selected_chroms.vcf.gz \
+     --f1r2-tar-gz ${results}/HG008_f1r2_selected_chroms.tar.gz
+
+# The below code snippet handles full WGS data for adequate computational resources
+#${gatk_path} Mutect2 \
+#    -R ${ref} \
+#    -I ${aligned_reads}/HG008-T_sorted_dedup_bqsr_reads.bam \
+#    -I ${aligned_reads}/HG008-N-D_sorted_dedup_bqsr_reads.bam \
+#    -tumor HG008-T \
+#    -normal HG008-N-D \
+#    --germline-resource ${mutect2_supporting_files}/af-only-gnomad.hg38.vcf.gz \
+#    --panel-of-normals ${mutect2_supporting_files}/1000g_pon.hg38.vcf.gz \
+#    -O ${results}/HG008_somatic_variants_mutect2.vcf.gz \
+#    --f1r2-tar-gz ${results}/HG008_f1r2_selected_chroms.tar.gz
+
+
+# 2.2. Estimate cross sample contamination                                                                                                                                                                                                              # Download intervals list                                                                                                   
+wget -P /home/aishamehmood/Project_Mutect2/additional_files/mutect2_additional_files https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/exome_calling_regions.v1.1.interval_list
+
+# GetPileupSummaries
+# Tumor
+${gatk_path} GetPileupSummaries \
+    --java-options '-Xmx3G' --tmp-dir ${project_dir}/tmp/ \
+    -I ${aligned_reads}/HG008-T_sorted_dedup_bqsr_reads.bam \
+    -V ${mutect2_supporting_files}/af-only-gnomad.hg38.vcf.gz \
+    -L ${mutect2_supporting_files}/exome_calling_regions.v1.1.interval_list \
+    -O ${results}/HG008_T_getpileupsummaries.table
+
+# Normal
+${gatk_path} GetPileupSummaries \
+    --java-options '-Xmx3G' --tmp-dir ${project_dir}/tmp/ \
+    -I ${aligned_reads}/HG008-N-D_sorted_dedup_bqsr_reads.bam  \
+    -V ${mutect2_supporting_files}/af-only-gnomad.hg38.vcf.gz \
+    -L ${mutect2_supporting_files}/exome_calling_regions.v1.1.interval_list \
+    -O ${results}/HG008-N-D_getpileupsummaries.table
+
+# Calculate contamination
+${gatk_path} CalculateContamination \
+    -I ${results}/HG008_T_getpileupsummaries.table \
+    -matched ${results}/HG008-N-D_getpileupsummaries.table \
+    -O ${results}/HG008_pair_calculatecontamination.table
+
+                                              

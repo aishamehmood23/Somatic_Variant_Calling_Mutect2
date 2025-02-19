@@ -24,3 +24,6 @@ https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/somatic
 PoN file
 https://storage.googleapis.com/gatk-best-practices/somatic-hg38/1000g_pon.hg38.vcf.gz
 https://storage.googleapis.com/gatk-best-practices/somatic-hg38/1000g_pon.hg38.vcf.gz.tbi
+
+Intervals file
+https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/exome_calling_regions.v1.1.interval_list
