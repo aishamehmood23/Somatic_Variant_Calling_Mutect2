@@ -54,30 +54,24 @@ The raw sequencing reads are processed through several steps to ensure data qual
 - **Collect Alignment & Insert Size Metrics using GATK**  
   Alignment statistics, such as read mapping percentages, coverage depth, and insert size distribution, are gathered using **GATK CollectAlignmentSummaryMetrics** and **CollectInsertSizeMetrics**. These metrics provide insights into sequencing performance and alignment quality.  
 
+### **2. Variant Calling**  
 
-### **2. Variant Calling**
+- **Call Variants using GATK Mutect2**  
+  Somatic variants are identified using **Mutect2**, with the analysis limited to 10 chromosomes to reduce computational demands. The workflow remains the same for whole-genome analysis, and users can modify the **-L** option accordingly. The output is an unfiltered VCF file containing raw variant calls. The **--f1r2-tar-gz** option is used during this step to collect strand orientation bias data, which is later required for filtering artifacts caused by sequencing errors.  
 
-- **Call Variants using Gatk Mutect2**
-  Somatic variants are identified using Mutect2, with the analysis limited to 10 chromosomes to reduce computational
-  demands. The workflow remains the same for all chromosomes analysis, and users can modify the -L option accordingly. The
-  output is an unfiltered VCF file containing raw variant calls. The --f1r2-tar-gz option is used
-  during this step to collect strand orientation bias data, which is later required for filtering artifacts caused by
-  sequencing errors.
+- **Estimating Cross-Sample Contamination**  
+  This step helps estimate the fraction of cross-sample contamination. The **GATK GetPileupSummaries** tool summarizes read support for known population variants. The **GATK CalculateContamination** tool estimates the contamination fraction. The output, HG008_pair_calculatecontamination.table, is used in **FilterMutectCalls**.  
 
-- **Estimating Cross Sample Contamination**
-  This step helps estimate the fraction of cross-sample contamination. The **GATK GetPileupSummaries** tool summarizes read support for known population variants. The **GATK
-  CalculateContamination** tool estimates the contamination fraction. The output, HG008_pair_calculatecontamination.table, is used in **FilterMutectCalls**.
+- **Read Orientation Artifacts Estimation**  
+  To filter out strand bias artifacts, a read orientation model is created using data from Mutect2. This helps identify sequencing errors caused by strand-specific bias. The model is generated from F1R2 counts collected during the variant calling step. It is later used to refine variant filtering and improve accuracy.  
 
-- **Read Orientation Artifacts Estimation**
-  To filter out strand bias artifacts, a read orientation model is created using data from Mutect2. This helps identify sequencing errors caused by strand-specific bias. The
-  model is generated from F1R2 counts collected during the variant calling step. It is later used to refine variant filtering and improve accuracy.
+- **Filtering Variants**  
+  Raw variant calls are filtered using **FilterMutectCalls** to remove false positives based on multiple factors, including:  
+  - **Sequencing artifacts** (using the read orientation model).  
+  - **Low-quality variants** and insufficient evidence supporting somatic mutations.  
+  - **Cross-sample contamination** (using estimated contamination levels).  
+  The final output is a high-confidence set of somatic variants ready for further annotation and interpretation.  
 
-- **Filtering Variants**
-  Raw variant calls are filtered using **FilterMutectCalls** to remove false positives based on multiple factors, including:
-    - Sequencing artifacts (using the read orientation model). 
-    - Low-quality variants and insufficient evidence supporting somatic mutations.
-    - Cross-sample contamination (using estimated contamination levels).
-  The final output is a high-confidence set of somatic variants ready for further annotation and interpretation.
    
 
 
