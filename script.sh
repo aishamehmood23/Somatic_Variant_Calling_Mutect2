@@ -169,4 +169,19 @@ ${gatk_path} CalculateContamination \
     -matched ${results}/HG008-N-D_getpileupsummaries.table \
     -O ${results}/HG008_pair_calculatecontamination.table
 
+
+# 2.3. Read orientation artifacts estimation
+${gatk_path} LearnReadOrientationModel \
+    -I ${results}/HG008_f1r2_selected_chroms.tar.gz \
+    -O ${results}/read-orientation-model.tar.gz
+
+
+# 2.4. Filter Variants
+${gatk_path} FilterMutectCalls \
+        -V ${results}/HG008_somatic_variants_mutect2_selected_chroms.vcf.gz \
+        -R ${ref} \
+        --contamination-table ${results}/HG008_pair_calculatecontamination.table \
+        --ob-priors ${results}/read-orientation-model.tar.gz \
+        -O ${results}/HG008_somatic_variants_filtered_mutect2.vcf
+
                                               
