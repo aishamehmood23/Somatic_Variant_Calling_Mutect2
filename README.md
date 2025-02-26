@@ -67,11 +67,11 @@ The raw sequencing reads are processed through several steps to ensure data qual
   To filter out strand bias artifacts, a read orientation model is created using data from Mutect2. This helps identify sequencing errors caused by strand-specific bias. The model is generated from F1R2 counts collected during the variant calling step. It is later used to refine variant filtering and improve accuracy.
 
 - **Filtering Variants**
-  Raw variant calls are filtered using **FilterMutectCalls** to remove false positives based on multiple factors, including: 
-- Sequencing artifacts (using the read orientation model). 
-- Low-quality variants and insufficient evidence supporting somatic mutations.
-- Cross-sample contamination (using estimated contamination levels).
-The final output is a high-confidence set of somatic variants ready for further annotation and interpretation.
+  Raw variant calls are filtered using **FilterMutectCalls** to remove false positives based on multiple factors, including:
+    - Sequencing artifacts (using the read orientation model). 
+    - Low-quality variants and insufficient evidence supporting somatic mutations.
+    - Cross-sample contamination (using estimated contamination levels).
+  The final output is a high-confidence set of somatic variants ready for further annotation and interpretation.
    
 
 
