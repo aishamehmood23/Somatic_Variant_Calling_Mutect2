@@ -72,7 +72,19 @@ The raw sequencing reads are processed through several steps to ensure data qual
   - **Cross-sample contamination** (using estimated contamination levels).  
   The final output is a high-confidence set of somatic variants ready for further annotation and interpretation.  
 
+### **3. Annotation**  
    
+- **Annotating variants using GATK Funcotator**  
+  The final set of high-confidence somatic variants is annotated using GATK Funcotator. This step enriches variant calls with functional information, including gene names, predicted impacts, and known database references. The annotation data sources are retrieved from GATK Funcotator DataSource v1.8 (hg38).
 
+## **Acknowledgments**  
+
+- **[GATK](https://gatk.broadinstitute.org/)** for providing tools and documentation for somatic variant calling.  
+- **[Bioinformagician's Somatic Variant Calling YouTube Tutorial](https://www.youtube.com/@Bioinformagician)**, which guided this workflow implementation.  
+
+## **References**  
+
+- **[GATK Best Practices for Somatic Short Variant Discovery](https://gatk.broadinstitute.org/hc/en-us/articles/360035531132)**  
+- **[Funcotator Documentation](https://gatk.broadinstitute.org/hc/en-us/articles/360035890831)**  
 
 

@@ -184,4 +184,24 @@ ${gatk_path} FilterMutectCalls \
         --ob-priors ${results}/read-orientation-model.tar.gz \
         -O ${results}/HG008_somatic_variants_filtered_mutect2.vcf
 
+
+# -----------------------------------------
+# Step 3: Annotation
+# -----------------------------------------
+
+# Annotation using Funcotator
+${gatk_path} Funcotator \
+    --variant ${results}/HG008_somatic_variants_filtered_mutect2.vcf \
+    --reference ${ref} \
+    --ref-version hg38 \
+    --data-sources-path /home/aishamehmood/apps/gatk-4.6.0.0/funcotator_dataSources.v1.8.hg38.20230908s \
+    --output ${results}/HG008_somatic_variants_functotated.vcf \
+    --output-file-format VCF
+
+
+# ----------------------------------------
+# Final Message
+# ----------------------------------------
+echo "Pipeline Completed"
+
                                               
