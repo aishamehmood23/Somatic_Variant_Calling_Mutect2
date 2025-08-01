@@ -1,4 +1,3 @@
-
 Updated: 2025-08-01
 
 Updated: 2025-08-01
@@ -89,6 +88,4 @@ The raw sequencing reads are processed through several steps to ensure data qual
 ## **References**  
 
 - **[GATK Best Practices for Somatic Short Variant Discovery](https://gatk.broadinstitute.org/hc/en-us/articles/360035531132)**  
-- **[Funcotator Documentation](https://gatk.broadinstitute.org/hc/en-us/articles/360035890831)**  
-
-
+- **[Funcotator Documentation](https://gatk.broadinstitute.org/hc/en-us/articles/360035890831)**
