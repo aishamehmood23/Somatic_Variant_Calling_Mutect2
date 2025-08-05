@@ -1,4 +1,4 @@
-Updated: 2025-08-04
+Updated: 2025-08-05
 
 # Somatic_Variant_Calling_Mutect2
 Somatic Variant Calling with Mutect2: A Beginner-Friendly Workflow Following GATK Best Practices
